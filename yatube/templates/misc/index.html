@@ -1,0 +1,23 @@
+{% extends "misc/base.html" %}
+{% block title %}Последние обновления на сайте{% endblock %}
+{% block header %}Последние обновления на сайте{% endblock %}
+{% block content %}
+
+    {% for post in page %}
+        {% include 'include/post_item.html' with post=post %}
+{#        {% load thumbnail %}#}
+{#        {% thumbnail post.image "960x339" crop="center" upscale=True as im %}#}
+{#            <img class="card-img" src="{{ im.url }}">#}
+{#        {% endthumbnail %}#}
+{#        <h3>#}
+{#            Автор: <a class="p-2 text-dark"#}
+{#                      href="/{{ post.author.username }}/">{{ post.author.get_full_name }}</a>,#}
+{#            Дата публикации: {{ post.pub_date|date:"d E Y" }}#}
+{#        </h3>#}
+{#        <p>{{ post.text|linebreaksbr }}</p>#}
+{#        {% if not forloop.last %}#}
+{#            <hr>{% endif %}#}
+    {% endfor %}
+    {% include "misc/paginator.html" with items=page paginator=paginator%}
+
+{% endblock %}

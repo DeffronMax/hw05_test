@@ -1,4 +1,3 @@
-import datetime
 import http
 import shutil
 import tempfile

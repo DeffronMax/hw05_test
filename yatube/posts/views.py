@@ -1,7 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import cache_page
 
 from .models import Post, Group, User, Follow
 from .forms import PostForm, CommentForm
@@ -128,6 +127,10 @@ def page_not_found(request, exception):
         {"path": request.path},
         status=404
     )
+
+
+def csrf_failure(request, reason=''):
+    return render(request, 'misc/403csrf.html')
 
 
 def server_error(request):

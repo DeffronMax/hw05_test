@@ -1,35 +1,34 @@
-{% extends "misc/base.html" %}
-{% block title %}О технологиях проекта{% endblock %}
+{% extends "base.html" %}
+{% block title %}О проектe{% endblock %}
 {% block content %}
-  <div class="row">
-    <!-- Левый вспомогательный блок -->
-    <div class="col-md-3 mb-3 mt-1">
-      <div class="card">
-        <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              <div class="h3">
-                <p>Технологии</p>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div class="h6 text-muted">
-                <p>Django <br>
-                    etc
-                </p>
-              </div>
-            </li>
-          </ul>
+    {% load user_filters %}
+    <main role="main" class="container">
+        <div class="row">
+            <div class="col-md-3 mb-3 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="h3">
+                                    Технологии
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="h6 text-muted">
+                                    Django! Python!
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card-body">
+                    <div class="card-text">
+                        <p>Текст страницы "Технологии"</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <!-- Тело страницы -->
-    <div class="col-md-9">
-      <div class="card-body">
-        <div class="card-text">
-          <p>Текст страницы "О технологиях"</p>
-        </div>
-      </div>
-    </div>
-  </div>
+    </main>
 {% endblock %}

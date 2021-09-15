@@ -70,6 +70,11 @@ class URLTests(TestCase):
                                               f'{self.post.id}/edit/')
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
-    def test_wrong_uri_returns_404(self):
-        response = self.client.get('test/404/code/')
+    def test_wrong_url_returns_404(self):
+        response = self.client.get('/non-exist-page/')
         self.assertEqual(response.status_code, 404)
+
+    def test_404_page_right_template(self):
+        response = self.client.get('/non-exist-page/')
+        template = 'misc/404.html'
+        self.assertTemplateUsed(response, template)

@@ -1,14 +1,21 @@
+import datetime
 from http import HTTPStatus
+import tempfile
+import shutil
 
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+from django.conf import settings
 
 from ..models import Group, Post
 
 User = get_user_model()
+MEDIA_ROOT_TEMP = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 
+@override_settings(MEDIA_ROOT=MEDIA_ROOT_TEMP)
 class PostCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -20,6 +27,31 @@ class PostCreateFormTests(TestCase):
     def setUp(self) -> None:
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
+        self.small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
+        )
+        self.image_for_new_post = SimpleUploadedFile(
+            name='small.gif',
+            content=self.small_gif,
+            content_type='image/gif'
+        )
+        self.post = Post.objects.create(
+            text=self.text,
+            pub_date=datetime.datetime.today().strftime("%m-%d-%Y"),
+            author=self.user,
+            group=self.group,
+            image=self.image_for_new_post,
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
 
     def test_new_post_added(self):
         """ проверка создания нового поста """
@@ -66,28 +98,36 @@ class PostCreateFormTests(TestCase):
             ),
         }
 
-    def test_edit_post(self):
-        # создаем пост в testcase
-        old_post = Post.objects.create(
-            text=PostCreateFormTests.text,
-            author=PostCreateFormTests.user,
-            group=PostCreateFormTests.group,
+    def test_edit_post2(self):
+        """ Проверка редактирования all in """
+        posts_count = Post.objects.count()
+        post_edit = self.post
+        text_old = post_edit.text
+        form_data = {'text': 'Текст отредактирован'}
+        response = self.authorized_client.post(
+            reverse('post_edit',
+                    kwargs={'username': self.user,
+                            'post_id': post_edit.pk}),
+            data=form_data,
+            follow=True,
         )
-        urls = self._get_urls(
-            PostCreateFormTests.user.username,
-            old_post.id,
-        )
+        post_new = Post.objects.first()
+        text_new = post_new.text
+        self.assertEqual(Post.objects.count(), posts_count)
+        self.assertEqual(text_new, form_data['text'])
+        self.assertIsNot(text_old, text_new)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
-        new_post_text = 'Обновленный текст'
-        self.authorized_client.post(
-            path=urls['post_edit'],
-            data={'text': new_post_text},
-        )
-        last_post = Post.objects.last()
-        # Проверка, что в БД поменялся текст
-        self.assertNotEqual(PostCreateFormTests.text, last_post.text)
-        # Проверки, что на всех страницах есть новый текст
-        for url in urls.values():
-            with self.subTest(url=url):
-                response = self.authorized_client.get(url)
-                self.assertContains(response, new_post_text, status_code=200)
+    def test_form_create(self):
+        posts_count = Post.objects.count()
+        forms = {
+            'text': PostCreateFormTests.text,
+            'group': self.group.id,
+            'image': self.image_for_new_post.name,
+        }
+        self.authorized_client.post(reverse('new_post'),
+                                    data=forms,
+                                    follow=True)
+        self.assertEqual(Post.objects.count(), posts_count + 1)
+        self.assertTrue(Post.objects.filter(text='test text')
+                        .exists())

@@ -110,9 +110,10 @@ class ViewsTests(TestCase):
 
     def test_edit_post_shows_correct_context(self):
         """Шаблон edit_post сформирован с правильным контекстом."""
-        response = self.authorized_client.get(reverse('posts:post_edit', kwargs={
-            'post_id': self.post.id
-        }))
+        response = self.authorized_client.get(
+            reverse('posts:post_edit', kwargs={
+                'post_id': self.post.id
+            }))
 
         form_fields = {
             'text': forms.fields.CharField,
@@ -124,8 +125,9 @@ class ViewsTests(TestCase):
 
     def test_context_profile(self):
         """Шаблон profile сформирован с правильным контекстом."""
-        response = self.authorized_client.get(reverse('posts:profile', kwargs={
-            'username': self.user.username,
+        response = self.authorized_client.get(
+            reverse('posts:profile',
+                    kwargs={'username': self.user.username,
         }))
 
         profile = {
@@ -140,9 +142,10 @@ class ViewsTests(TestCase):
 
     def test_post_correct_context(self):
         """Шаблон post сформирован с правильным контекстом."""
-        response = self.authorized_client.get(reverse('posts:post_detail', kwargs={
-            'post_id': self.post.id
-        }))
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={
+                'post_id': self.post.id
+            }))
         profile = {
             'post': self.post
         }
@@ -288,7 +291,7 @@ class PaginatorViewsTest(TestCase):
     def test_index_paginator_next_page(self):
         """Проверка паджинатора 3 поста на 2 странице"""
         response = (self.guest_client.get(reverse('posts:index')
-                    + '?page=2'))
+                                          + '?page=2'))
         self.assertEqual(len(response.context['page_obj']), 3)
 
     def test_group_list_paginator_first_page(self):
@@ -299,20 +302,21 @@ class PaginatorViewsTest(TestCase):
 
     def test_group_list_next_page(self):
         slug_test = PaginatorViewsTest.group.slug
-        response = (self.guest_client.get(reverse('posts:group_posts',
-                    kwargs={'slug': slug_test}) + '?page=2'))
+        response = (self.guest_client.
+                    get(reverse('posts:group_posts',
+                                kwargs={'slug': slug_test}) + '?page=2'))
         self.assertEqual(len(response.context['page_obj']), 3)
 
     def test_profile_paginator_first_page(self):
         slug_author = PaginatorViewsTest.post.author
-        response = (self.authorized_client.get(reverse('posts:profile',
-                    kwargs={'username': slug_author})))
+        response = (self.authorized_client.get(reverse(
+            'posts:profile', kwargs={'username': slug_author})))
         self.assertEqual(len(response.context['page_obj']), 10)
 
     def test_profile_paginator_next_page(self):
         slug_author = PaginatorViewsTest.post.author
-        response = (self.authorized_client.get(reverse('posts:profile',
-                    kwargs={'username': slug_author}) + '?page=2'))
+        response = (self.authorized_client.get(reverse(
+            'posts:profile', kwargs={'username': slug_author}) + '?page=2'))
         self.assertEqual(len(response.context['page_obj']), 3)
 
 

@@ -5,4 +5,3 @@ def year(request):
     return {
         'year': timezone.now().year,
     }
-

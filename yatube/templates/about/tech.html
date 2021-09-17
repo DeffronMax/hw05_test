@@ -1,34 +1,20 @@
 {% extends "base.html" %}
-{% block title %}О проектe{% endblock %}
+{% block title %}Технологии{% endblock %}
 {% block content %}
-    {% load user_filters %}
-    <main role="main" class="container">
-        <div class="row">
-            <div class="col-md-3 mb-3 mt-1">
-                <div class="card">
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <div class="h3">
-                                    Технологии
-                                </div>
-                            </li>
-                            <li class="list-group-item">
-                                <div class="h6 text-muted">
-                                    Django, Python.
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <div class="card-body">
-                    <div class="card-text">
-                        <p>Текст страницы "Технологии"</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-{% endblock %}
+<div class="row">
+  <h1>tech stuff</h1>
+  <aside class="col-12 col-md-3">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        Python 3.9
+      </li>
+      <li class="list-group-item">
+        Django fm
+      </li>
+    </ul>
+  </aside>
+  <article class="col-12 col-md-9">
+    <p>Текст страницы "Технологии"</p>
+  </article>
+</div>
+{% endblock %} 

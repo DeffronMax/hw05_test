@@ -59,7 +59,7 @@ class PostCreateFormTests(TestCase):
         form_data = {'text': PostCreateFormTests.text,
                      'group': self.group.id}
         response = self.authorized_client.post(
-            reverse('new_post'),
+            reverse('posts:post_create'),
             data=form_data,
             follow=True
         )
@@ -82,8 +82,8 @@ class PostCreateFormTests(TestCase):
                 viewname='profile',
                 kwargs={'username': username},
             ),
-            'post': reverse(
-                viewname='post',
+            'post_detail': reverse(
+                viewname='post_detail',
                 kwargs={
                     'username': username,
                     'post_id': post_id,
@@ -105,11 +105,10 @@ class PostCreateFormTests(TestCase):
         text_old = post_edit.text
         form_data = {'text': 'Текст отредактирован'}
         response = self.authorized_client.post(
-            reverse('post_edit',
-                    kwargs={'username': self.user,
-                            'post_id': post_edit.pk}),
+            reverse('posts:post_edit',
+                    kwargs={'post_id': post_edit.pk}),
             data=form_data,
-            follow=True,
+            follow=True
         )
         post_new = Post.objects.first()
         text_new = post_new.text
@@ -125,7 +124,7 @@ class PostCreateFormTests(TestCase):
             'group': self.group.id,
             'image': self.image_for_new_post.name,
         }
-        self.authorized_client.post(reverse('new_post'),
+        self.authorized_client.post(reverse('posts:post_create'),
                                     data=forms,
                                     follow=True)
         self.assertEqual(Post.objects.count(), posts_count + 1)

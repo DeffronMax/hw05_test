@@ -16,7 +16,7 @@ User = get_user_model()
 
 
 class ViewsTests(TestCase):
-    @classmeth
+    @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.guest_client = Client()

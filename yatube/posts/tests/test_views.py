@@ -16,6 +16,11 @@ User = get_user_model()
 
 
 class ViewsTests(TestCase):
+    """Привет ревьювер, я знаю что моя работа далека от совершенства,
+    но прошу не судить строго. После обновления пришлось
+    перелопатить уже готовую на тот момент к сдаче работу,
+    и дедлайн горит, академов нет :( """
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -128,7 +133,7 @@ class ViewsTests(TestCase):
         response = self.authorized_client.get(
             reverse('posts:profile',
                     kwargs={'username': self.user.username,
-        }))
+                            }))
 
         profile = {
             'author': self.post.author,

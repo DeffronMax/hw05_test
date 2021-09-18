@@ -132,6 +132,7 @@ def profile_follow(request, username):
     # если что-то не так, то можно еще серым натыкать
     # с серыми самостоятельно поработаю, спасибо за труд!
     followed_author = get_object_or_404(User, username=username)
+    # if user == author
     if followed_author != request.user:
         Follow.objects.get_or_create(
             user=request.user,

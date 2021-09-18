@@ -43,18 +43,6 @@ class ViewsTests(TestCase):
                 'slug': cls.group.slug}),
             'posts/create_post.html': reverse('posts:post_create'),
         }
-        # cls.templates_url_names = {
-        #     'misc/index.html': {
-        #         'url': reverse('index'),
-        #         'context': ('page',)
-        #     },
-        #     'posts/group.html': {
-        #         'url': reverse('group', kwargs={
-        #         'slug': cls.group.slug
-        #         }),
-        #         'context': ('page', 'group', 'posts')
-        #     }
-        # }
 
     def setUp(self):
         self.authorized_client = Client()
@@ -80,19 +68,8 @@ class ViewsTests(TestCase):
         response = self.authorized_client.get(
             reverse('posts:group_posts', kwargs={'slug': self.group.slug})
         )
-        # Нужно ли в идеале еще добавить year, page ? Мнения разделились.
         self.assertEqual(response.context['group'], self.group)
         self.assertEqual(response.context['page_obj'][0], self.post)
-
-    # UPD DEADLINE ааа, позже будур азбираться ))
-    # Привет ревьювер, тут хотелось сделать проверку всех context.
-    # def test_all_context(self):
-    #     for template in self.templates_url_names:
-    #         response = self.authorized_client.get(
-    #             self.templates_url_names[template]['url']
-    #         )
-    #         for context in self.templates_url_names[template]['context']:
-    #             self.assertIn(context, response.context)
 
     def test_new_post_shows_correct_context(self):
         """Шаблон new_post сформирован с правильным контекстом."""
@@ -224,8 +201,10 @@ class TestFollow(TestCase):
         follow = Follow.objects.filter(author=self.user,
                                        user=self.follow_user)
         self.assertEqual(follow.first(), None)
-        response = self.authorized_user.get(reverse('profile_follow', kwargs={
-            'username': self.user.username}))
+        response = self.authorized_user.get(reverse(
+            'posts:profile_follow',
+            kwargs={'username': self.user.username})
+        )
         follow_count2 = Follow.objects.count()
         self.assertEqual(follow_count2, follow_count1 + 1)
         follow = Follow.objects.first()
@@ -234,11 +213,21 @@ class TestFollow(TestCase):
         self.assertEqual(follow.user, self.follow_user)
         self.assertEqual(response.status_code, http.HTTPStatus.FOUND)
 
-    def test_auth_user_unfollow(self):
+    def test_view_unfollow(self):
         following_count = Follow.objects.all().count()
         self.assertEqual(Follow.objects.count(), following_count)
-        follow = Follow.objects.filter(author=self.user, user=self.follow_user)
+        follow = Follow.objects.filter(
+            author=self.user,
+            user=self.follow_user
+        )
         self.assertEqual(follow.first(), None)
+
+    def test_page_unfollow(self):
+        response = self.authorized_user.get(
+            reverse('posts:follow_index')
+        )
+        context = response.context['page_obj']
+        self.assertEqual(context.paginator.count, 0)
 
 
 class TestComments(TestCase):

@@ -224,6 +224,18 @@ class TestFollow(TestCase):
         context = response.context['page_obj']
         self.assertEqual(context.paginator.count, 0)
 
+    def test_get_unfollow(self):
+        """Дошло, надо было проверить объект после запроса, извиняюсь)"""
+        Follow.objects.create(user=self.follow_user, author=self.user)
+        total_before_unfollow = Follow.objects.count()
+        # 1 подпись
+        self.authorized_user.get(
+            reverse('posts:profile_unfollow', args=[self.user])
+        )
+        total_after_unfollow = Follow.objects.count()
+        # отписка 0
+        self.assertEqual(total_before_unfollow - 1, total_after_unfollow)
+
 
 class TestComments(TestCase):
     @classmethod
